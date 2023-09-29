@@ -4,19 +4,56 @@ import java.io.*;
 import java.net.Socket;
 
 public class HTTPClient {
-    String serverAddress = readLine().trim(); // 웹 서버 주소
-    int serverPort = Integer.parseInt(readLine().trim()); // 서버 포트
-    String requestMethod = readLine().toUpperCase().trim(); // 요청 메서드 종류
-    String requestPath = readLine().trim(); // 요청할 리소스 경로
+    String serverAddress ;// 웹 서버 주소
+    int serverPort; // 서버 포트
+    String requestMethod; // 요청 메서드 종류
+    String requestPath; // 요청할 리소스 경로
 
     public HTTPClient() throws IOException {
     }
 
     private String createRequestMessage() throws IOException {
-        // HTTP 요청 메시지
-        String requestMessage = requestMethod + " " + requestPath + " HTTP/1.1\r\n";
-        requestMessage += "Host: " + serverAddress + "\r\n";
-        requestMessage += "Connection: close\r\n\r\n";
+        System.out.print("serverAddress : ");
+        serverAddress = readLine().trim();
+        System.out.print("serverPort : ");
+        serverPort = Integer.parseInt(readLine().trim());
+        System.out.print("requestMethod : ");
+        requestMethod = readLine().toUpperCase().trim();
+        System.out.print("requestPath : ");
+        requestPath = readLine().trim();
+
+
+
+
+        String requestMessage = "";
+        if (requestMethod.equals("GET")){
+            // HTTP GET 요청 메시지
+            requestMessage += requestMethod + " " + requestPath + " HTTP/1.1\r\n";
+            requestMessage += "Host: " + serverAddress + "\r\n";
+            requestMessage += "Connection: close\r\n\r\n";
+        } else if (requestMethod.equals("POST")){
+            System.out.print("Content-Type (1) form (2) json : ");
+            int n = Integer.parseInt(readLine().trim());
+            String contentType = null;
+            if (n < 1 || 2 < n){
+                System.out.println("type error");
+                throw new IllegalArgumentException("type error");
+            }
+            if (n == 1){
+                contentType = "application/x-www-form-urlencoded";
+            } else if (n == 2) {
+                contentType = "application/json";
+            }
+            System.out.print("requestBody : ");
+            String requestBody = readLine().trim();
+
+            requestMessage = "POST " + requestPath + " HTTP/1.1\r\n";
+            requestMessage += "Host: " + serverAddress + "\r\n";
+            requestMessage += "Content-Type: " + contentType + "\r\n";
+            requestMessage += "Content-Length: " + requestBody.length() + "\r\n";
+            requestMessage += "Connection: close\r\n\r\n";
+            requestMessage += requestBody;
+        }
 
         return requestMessage;
     }
@@ -28,9 +65,7 @@ public class HTTPClient {
 
             // 웹 서버와 연결
             Socket socket = new Socket(serverAddress, serverPort);
-            System.out.println("Connect Server");
-
-
+            System.out.println("Connect Server\n");
 
             // HTTP 요청 전송
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -45,7 +80,7 @@ public class HTTPClient {
 
             // 연결 종료
             socket.close();
-            System.out.println("Disconnect Server");
+            System.out.println("\nDisconnect Server");
 
         } catch (IOException e) {
             e.printStackTrace();
