@@ -1,5 +1,6 @@
 package computerNetwork;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.Socket;
 
@@ -64,12 +65,15 @@ public class HTTPClient {
             String requestMessage = createRequestMessage();
 
             // 웹 서버와 연결
-            Socket socket = new Socket(serverAddress, serverPort);
+            SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+
+            Socket socket = sslSocketFactory.createSocket(serverAddress, serverPort);
             System.out.println("Connect Server\n");
 
             // HTTP 요청 전송
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
             printWriter.println(requestMessage);
+            printWriter.flush();
 
             // HTTP 응답 출력
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
