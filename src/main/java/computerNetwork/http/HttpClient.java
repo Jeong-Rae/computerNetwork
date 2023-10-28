@@ -90,6 +90,7 @@ public class HttpClient {
         String requestMessage = "GET " + requestPath + " HTTP/1.1\r\n";
         requestMessage += "Host: " + serverHost + "\r\n";
         requestMessage += headersToString();
+        requestMessage += "Accept: */*";
         requestMessage += "Connection: close\r\n\r\n";
 
         return requestMessage;
@@ -101,23 +102,30 @@ public class HttpClient {
         requestMessage += "Content-Type: " + contentType + "\r\n";
         requestMessage += "Content-Length: " + requestBody.length() + "\r\n";
         requestMessage += headersToString();
+        requestMessage += "Accept: */*";
         requestMessage += "Connection: close\r\n\r\n";
         requestMessage += requestBody;
 
         return requestMessage;
     }
     private String createPutMessage(){
-        String requestMessage = "";
-        requestMessage += httpMethod + " " + requestPath + " HTTP/1.1\r\n";
+        String requestBody = bodyToString();
+        String requestMessage = "PUT " + requestPath + " HTTP/1.1\r\n";
         requestMessage += "Host: " + serverHost + "\r\n";
+        requestMessage += "Content-Type: " + contentType + "\r\n";
+        requestMessage += "Content-Length: " + requestBody.length() + "\r\n";
+        requestMessage += headersToString();
+        requestMessage += "Accept: */*";
         requestMessage += "Connection: close\r\n\r\n";
+        requestMessage += requestBody;
 
         return requestMessage;
     }
     private String createDeleteMessage(){
-        String requestMessage = "";
-        requestMessage += httpMethod + " " + requestPath + " HTTP/1.1\r\n";
+        String requestMessage = "DELETE " + requestPath + " HTTP/1.1\r\n";
         requestMessage += "Host: " + serverHost + "\r\n";
+        requestMessage += headersToString();
+        requestMessage += "Accept: */*";
         requestMessage += "Connection: close\r\n\r\n";
 
         return requestMessage;

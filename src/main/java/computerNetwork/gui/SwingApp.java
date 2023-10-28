@@ -27,6 +27,7 @@ public class SwingApp {
     private JRadioButton noneRadioButton;
     private JRadioButton urlEncodedRadioButton;
     private JRadioButton jsonRadioButton;
+    private JRadioButton formDataRadioButton;
 
     private SwingApp(){
 
@@ -55,20 +56,12 @@ public class SwingApp {
         });
         requestPanel.add(urlField);
 
-
+        // request send 버튼
         JButton sendButton = new JButton("Send");
         sendButton.addActionListener(e -> {
-
-
             Map<String, String> params = tableToMap(paramsTable);
-            for (String v : params.values())
-                System.out.println("[gui] val " + v);
             Map<String, String> headers = tableToMap(headersTable);
-            for (String v : headers.values())
-                System.out.println("[gui] val " + v);
             Map<String, String> body = tableToMap(bodyTable);
-            for (String v : body.values())
-                System.out.println("[gui] val " + v);
 
             HttpClient httpClient = new HttpClient(params, headers, body, contentType);
 
@@ -76,19 +69,19 @@ public class SwingApp {
             responseField.setText(ret.get("response"));
             requestField.setText(ret.get("request"));
         });
-
         requestPanel.add(sendButton);
 
         frame.add(requestPanel);
 
-        // PARAMS table
+        // params table
         paramsTable = createTable("Params", 3, frame);
-        // HEADER table
+        // headers table
         headersTable = createTable("Headers", 3, frame);
 
+        // contentType 라디오 버튼
         frame.add(createContentRadioButton());
 
-        // BODY table
+        // Body table
         bodyTable = createTable("Body", 4, frame);
 
         // Request field
@@ -136,26 +129,27 @@ public class SwingApp {
         noneRadioButton = new JRadioButton("none");
         urlEncodedRadioButton = new JRadioButton("x-www-form-urlencoded");
         jsonRadioButton = new JRadioButton("json");
+        formDataRadioButton = new JRadioButton("form-data");
 
         noneRadioButton.addActionListener(e -> updateContentType());
         urlEncodedRadioButton.addActionListener(e -> updateContentType());
         jsonRadioButton.addActionListener(e -> updateContentType());
+        formDataRadioButton.addActionListener(e -> updateContentType());
 
-        // Group radio buttons
         ButtonGroup bodyContentTypeGroup = new ButtonGroup();
         bodyContentTypeGroup.add(noneRadioButton);
         bodyContentTypeGroup.add(urlEncodedRadioButton);
         bodyContentTypeGroup.add(jsonRadioButton);
+        bodyContentTypeGroup.add(formDataRadioButton);
 
-        // Set a default selection
         noneRadioButton.setSelected(true);
 
-        // Create a panel for radio buttons
         JPanel radioPanel = new JPanel();
         radioPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         radioPanel.add(noneRadioButton);
         radioPanel.add(urlEncodedRadioButton);
         radioPanel.add(jsonRadioButton);
+        radioPanel.add(formDataRadioButton);
 
         return radioPanel;
     }
@@ -167,6 +161,8 @@ public class SwingApp {
             contentType = "application/x-www-form-urlencoded";
         } else if (jsonRadioButton.isSelected()) {
             contentType = "application/json";
+        } else if (formDataRadioButton.isSelected()) {
+            contentType = "multipart/form-data";
         }
     }
 
@@ -177,7 +173,6 @@ public class SwingApp {
             String key = (String) tableModel.getValueAt(i, 0);
             String value = (String) tableModel.getValueAt(i, 1);
             if (key != null && !key.trim().isEmpty() && value != null && !value.trim().isEmpty()) {
-                System.out.println("[gui] " + key + " : " + value);
                 map.put(key, value);
             }
         }
