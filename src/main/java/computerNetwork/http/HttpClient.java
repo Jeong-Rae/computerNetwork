@@ -90,7 +90,7 @@ public class HttpClient {
         String requestMessage = "GET " + requestPath + " HTTP/1.1\r\n";
         requestMessage += "Host: " + serverHost + "\r\n";
         requestMessage += headersToString();
-        requestMessage += "Accept: */*";
+        requestMessage += "Accept: */*\r\n";
         requestMessage += "Connection: close\r\n\r\n";
 
         return requestMessage;
@@ -102,7 +102,7 @@ public class HttpClient {
         requestMessage += "Content-Type: " + contentType + "\r\n";
         requestMessage += "Content-Length: " + requestBody.length() + "\r\n";
         requestMessage += headersToString();
-        requestMessage += "Accept: */*";
+        requestMessage += "Accept: */*\r\n";
         requestMessage += "Connection: close\r\n\r\n";
         requestMessage += requestBody;
 
@@ -115,7 +115,7 @@ public class HttpClient {
         requestMessage += "Content-Type: " + contentType + "\r\n";
         requestMessage += "Content-Length: " + requestBody.length() + "\r\n";
         requestMessage += headersToString();
-        requestMessage += "Accept: */*";
+        requestMessage += "Accept: */*\r\n";
         requestMessage += "Connection: close\r\n\r\n";
         requestMessage += requestBody;
 
@@ -125,7 +125,7 @@ public class HttpClient {
         String requestMessage = "DELETE " + requestPath + " HTTP/1.1\r\n";
         requestMessage += "Host: " + serverHost + "\r\n";
         requestMessage += headersToString();
-        requestMessage += "Accept: */*";
+        requestMessage += "Accept: */*\r\n";
         requestMessage += "Connection: close\r\n\r\n";
 
         return requestMessage;
@@ -159,7 +159,7 @@ public class HttpClient {
             return "";
         return headers.entrySet().stream()
                 .map(entry -> entry.getKey() + ": " + entry.getValue())
-                .collect(Collectors.joining("\n"));
+                .collect(Collectors.joining("\r\n"));
     }
 
     private String bodyToString(){

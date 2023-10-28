@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SwingApp {
+    private int width = 720;
+    private int height = 1080;
 
     private static SwingApp instance;
     private String method = "GET";
@@ -17,8 +19,8 @@ public class SwingApp {
     private String contentType;
 
 
-    private final JTextArea requestField = new JTextArea(5, 80);
-    private final JTextArea responseField = new JTextArea(13, 80);
+    private final JTextArea requestField = new JTextArea(8, 70);
+    private final JTextArea responseField = new JTextArea(12, 70);
 
     private JTable paramsTable;
     private JTable headersTable;
@@ -32,7 +34,7 @@ public class SwingApp {
     private SwingApp(){
 
         JFrame frame = new JFrame("Http Client");
-        frame.setSize(1080, 720);
+        frame.setSize(width + 100, height);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setLayout(new FlowLayout());
@@ -85,6 +87,7 @@ public class SwingApp {
         bodyTable = createTable("Body", 4, frame);
 
         // Request field
+        requestField.setMargin(new Insets(10, 10, 10, 10));
         requestField.setEditable(false);
         JScrollPane requestScrollPane = new JScrollPane(requestField);
 
@@ -92,6 +95,7 @@ public class SwingApp {
 
 
         // Response field
+        responseField.setMargin(new Insets(10, 10, 10, 10));
         responseField.setEditable(false);
         JScrollPane responseScrollPane = new JScrollPane(responseField);
 
@@ -114,10 +118,10 @@ public class SwingApp {
             model.addRow(new Object[]{"", ""});
         }
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(1060, rows * 23 + 25));
+        scrollPane.setPreferredSize(new Dimension(width, rows * 23 + 25));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
-        tablePanel.setPreferredSize(new Dimension(1060, rows * 23 + 25 + label.getPreferredSize().height));
+        tablePanel.setPreferredSize(new Dimension(width, rows * 23 + 25 + label.getPreferredSize().height));
 
         frame.add(tablePanel);
 
