@@ -14,7 +14,7 @@ public class SwingApp {
     private static SwingApp instance;
     private String response;
     private String method = "GET";
-    private String url;
+    private String url = "https://api.interfacesejong.xyz/login.html";
 
 
     private final JTextArea requestField = new JTextArea(5, 80);
@@ -25,7 +25,6 @@ public class SwingApp {
     private JTable bodyTable;
 
     private SwingApp(){
-        HttpClient httpClient = new HttpClient();
 
         JFrame frame = new JFrame("Http Client");
         frame.setSize(1080, 720);
@@ -45,19 +44,20 @@ public class SwingApp {
 
         // URL 입력
         JTextField urlField = new JTextField(35);
-        //urlField.setText(url);
+        urlField.setText(url);
         urlField.addActionListener(e -> {
             url = urlField.getText();
-            System.out.println(url);
+            System.out.println("[gui]url : " + url);
         });
         requestPanel.add(urlField);
 
 
         JButton sendButton = new JButton("Send");
         sendButton.addActionListener(e -> {
-            /*
-            Map<String, String> params = new HashMap<>();
+
             DefaultTableModel tableModel;
+
+            Map<String, String> params = new HashMap<>();
             tableModel = (DefaultTableModel) paramsTable.getModel();
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 String key = (String) tableModel.getValueAt(i, 0);
@@ -83,10 +83,11 @@ public class SwingApp {
                 if (key != null && !key.trim().isEmpty() && value != null && !value.trim().isEmpty()) {
                     params.put(key, value);
                 }
-            }*/
+            }
+
+            HttpClient httpClient = new HttpClient(params, headers, body);
 
             Map<String, String> ret = httpClient.sendRequest(url, method);
-            System.out.println(response);
             responseField.setText(ret.get("response"));
             requestField.setText(ret.get("request"));
         });
