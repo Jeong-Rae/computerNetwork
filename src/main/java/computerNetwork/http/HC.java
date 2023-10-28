@@ -1,16 +1,16 @@
-package computerNetwork;
+package computerNetwork.http;
 
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.Socket;
 
-public class HTTPClient {
+public class HC {
     String serverAddress ;// 웹 서버 주소
     int serverPort; // 서버 포트
     String requestMethod; // 요청 메서드 종류
     String requestPath; // 요청할 리소스 경로
 
-    public HTTPClient() throws IOException {
+    public HC() throws IOException {
     }
 
     private String createRequestMessage() throws IOException {
@@ -22,8 +22,6 @@ public class HTTPClient {
         requestMethod = readLine().toUpperCase().trim();
         System.out.print("requestPath : ");
         requestPath = readLine().trim();
-
-
 
 
         String requestMessage = "";
