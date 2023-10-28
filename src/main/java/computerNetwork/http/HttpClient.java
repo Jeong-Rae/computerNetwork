@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HttpClient {
     private String httpMethod;
@@ -22,10 +23,11 @@ public class HttpClient {
     public HttpClient() {
     }
 
-    public HttpClient(Map<String, String> params, Map<String, String> headers, Map<String, String> body) {
+    public HttpClient(Map<String, String> params, Map<String, String> headers, Map<String, String> body, String contentType) {
         this.params = params;
         this.headers = headers;
         this.body = body;
+        this.contentType = contentType;
     }
 
     public Map<String, String> sendRequest(String url, String method) {
@@ -37,21 +39,21 @@ public class HttpClient {
 
         System.out.println(serverHost);
         System.out.println(port);
+        System.out.println(requestMessage);
 
         try {
-
             // TCP socket 생성
             SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 
             Socket socket = sslSocketFactory.createSocket(serverHost, port);
             System.out.println("Connect Server\n");
 
-            // HTTP 요청 전송
+            // HTTP request 전송
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
             printWriter.println(requestMessage);
             printWriter.flush();
 
-            // HTTP 응답 출력
+            // HTTP response 출력
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String responseLine;
             while ((responseLine = bufferedReader.readLine()) != null) {
@@ -84,11 +86,23 @@ public class HttpClient {
         return null;
     }
 
-    private String createPostMessage(){
-        String requestMessage = "";
-        requestMessage += httpMethod + " " + requestPath + " HTTP/1.1\r\n";
+    private String createGetMessage(){
+        String requestMessage = "GET " + requestPath + " HTTP/1.1\r\n";
         requestMessage += "Host: " + serverHost + "\r\n";
+        requestMessage += headersToString();
         requestMessage += "Connection: close\r\n\r\n";
+
+        return requestMessage;
+    }
+    private String createPostMessage(){
+        String requestBody = bodyToString();
+        String requestMessage = "POST " + requestPath + " HTTP/1.1\r\n";
+        requestMessage += "Host: " + serverHost + "\r\n";
+        requestMessage += "Content-Type: " + contentType + "\r\n";
+        requestMessage += "Content-Length: " + requestBody.length() + "\r\n";
+        requestMessage += headersToString();
+        requestMessage += "Connection: close\r\n\r\n";
+        requestMessage += requestBody;
 
         return requestMessage;
     }
@@ -108,20 +122,12 @@ public class HttpClient {
 
         return requestMessage;
     }
-    private String createGetMessage(){
-        String requestMessage = "";
-        requestMessage += httpMethod + " " + requestPath + " HTTP/1.1\r\n";
-        requestMessage += "Host: " + serverHost + "\r\n";
-        requestMessage += "Connection: close\r\n\r\n";
-
-        return requestMessage;
-    }
 
     private void parseUrl(String urlStr) {
         try {
             URL url = new URL(urlStr);
             serverHost = url.getHost();
-            requestPath = url.getPath();
+            requestPath = url.getPath() + paramsToQuery();
             if (urlStr.startsWith("https"))
                 port = 443;
             else if (urlStr.startsWith("http"))
@@ -130,5 +136,37 @@ public class HttpClient {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String paramsToQuery(){
+        if (params.isEmpty())
+            return "";
+        return "?" + params.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("&"));
+    }
+
+    private String headersToString(){
+        if (headers.isEmpty())
+            return "";
+        return headers.entrySet().stream()
+                .map(entry -> entry.getKey() + ": " + entry.getValue())
+                .collect(Collectors.joining("\n"));
+    }
+
+    private String bodyToString(){
+        if (body.isEmpty())
+            return "";
+        if (contentType.equals("application/x-www-form-urlencoded")){
+            return body.entrySet().stream()
+                    .map(entry -> entry.getKey() + "=" + entry.getValue())
+                    .collect(Collectors.joining("&"));
+        }
+        if (contentType.equals("application/json")){
+            return body.entrySet().stream()
+                    .map(entry -> "\"" + entry.getKey() + "\":\"" + entry.getValue() + "\"")
+                    .collect(Collectors.joining(",","{","}"));
+        }
+        return "";
     }
 }
