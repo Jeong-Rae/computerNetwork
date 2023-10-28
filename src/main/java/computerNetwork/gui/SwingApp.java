@@ -5,13 +5,12 @@ import computerNetwork.http.HttpClient;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SwingApp {
-    private int width = 720;
-    private int height = 1080;
+    private final int width = 720;
+    private final int height = 1080;
 
     private static SwingApp instance;
     private String method = "GET";
@@ -87,19 +86,28 @@ public class SwingApp {
         bodyTable = createTable("Body", 4, frame);
 
         // Request field
+        JPanel requestTextPanel = new JPanel();
+        requestTextPanel.setLayout(new BorderLayout());
+        JLabel requestLabel = new JLabel("Request Massage");
+        requestTextPanel.add(requestLabel, BorderLayout.NORTH);
         requestField.setMargin(new Insets(10, 10, 10, 10));
         requestField.setEditable(false);
         JScrollPane requestScrollPane = new JScrollPane(requestField);
+        requestTextPanel.add(requestScrollPane);
 
-        frame.add(requestScrollPane);
-
+        frame.add(requestTextPanel);
 
         // Response field
+        JPanel responseTextPanel = new JPanel();
+        responseTextPanel.setLayout(new BorderLayout());
+        JLabel responseLabel = new JLabel("Response Massage");
+        responseTextPanel.add(responseLabel, BorderLayout.NORTH);
         responseField.setMargin(new Insets(10, 10, 10, 10));
         responseField.setEditable(false);
         JScrollPane responseScrollPane = new JScrollPane(responseField);
+        responseTextPanel.add(responseScrollPane);
 
-        frame.add(responseScrollPane);
+        frame.add(responseTextPanel);
 
         frame.setVisible(true);
     }
@@ -183,7 +191,7 @@ public class SwingApp {
         return map;
     }
 
-    public static SwingApp getInstance() throws IOException {
+    public static SwingApp getInstance() {
         if (instance == null) {
             instance = new SwingApp();
         }
