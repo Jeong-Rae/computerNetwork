@@ -15,7 +15,7 @@ public class SwingApp {
     private static SwingApp instance;
     private String method = "GET";
     private String url = "https://api.interfacesejong.xyz/login.html";
-    private String contentType;
+    private String contentType = "none";
 
 
     private final JTextArea requestField = new JTextArea(8, 70);
@@ -102,9 +102,11 @@ public class SwingApp {
         responseTextPanel.setLayout(new BorderLayout());
         JLabel responseLabel = new JLabel("Response Massage");
         responseTextPanel.add(responseLabel, BorderLayout.NORTH);
+
         responseField.setMargin(new Insets(10, 10, 10, 10));
         responseField.setEditable(false);
         JScrollPane responseScrollPane = new JScrollPane(responseField);
+
         responseTextPanel.add(responseScrollPane);
 
         frame.add(responseTextPanel);
@@ -168,7 +170,7 @@ public class SwingApp {
 
     private void updateContentType() {
         if (noneRadioButton.isSelected()) {
-            contentType = "";
+            contentType = "none";
         } else if (urlEncodedRadioButton.isSelected()) {
             contentType = "application/x-www-form-urlencoded";
         } else if (jsonRadioButton.isSelected()) {

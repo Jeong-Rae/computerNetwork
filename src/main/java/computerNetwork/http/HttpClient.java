@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class HttpClient {
@@ -15,6 +16,7 @@ public class HttpClient {
     private String requestPath;
     private int port;
     private String contentType;
+    private UUID boundary;
 
     Map<String, String> params;
     Map<String, String> headers;
@@ -158,8 +160,8 @@ public class HttpClient {
         if (headers.isEmpty())
             return "";
         return headers.entrySet().stream()
-                .map(entry -> entry.getKey() + ": " + entry.getValue())
-                .collect(Collectors.joining("\r\n"));
+                .map(entry -> entry.getKey() + ": " + entry.getValue() + "\r\n")
+                .collect(Collectors.joining());
     }
 
     private String bodyToString(){
@@ -174,6 +176,13 @@ public class HttpClient {
             return body.entrySet().stream()
                     .map(entry -> "\"" + entry.getKey() + "\":\"" + entry.getValue() + "\"")
                     .collect(Collectors.joining(",","{","}"));
+        }
+        if (contentType.equals("multipart/form-data")){
+            boundary = UUID.randomUUID();
+            contentType += "; boundary="+boundary;
+            return body.entrySet().stream()
+                    .map(entry -> "--"+boundary.toString() + "\nContent-Disposition: form-data; name=\"" + entry.getKey()+ "\"\n\n" + entry.getValue() + "\n")
+                    .collect(Collectors.joining());
         }
         return "";
     }
