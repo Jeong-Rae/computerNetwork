@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,9 +40,9 @@ public class HttpClient {
         Map<String, String> ret = new HashMap<>();
         ret.put("request",requestMessage);
 
-        System.out.println(serverHost);
-        System.out.println(port);
-        System.out.println(requestMessage);
+        System.out.println("server host: " + serverHost);
+        System.out.println("server port: " + port);
+        System.out.println("request Message\n" + requestMessage);
 
         try {
             // TCP socket 생성
@@ -67,10 +68,14 @@ public class HttpClient {
 
             // 연결 종료
             socket.close();
-            System.out.println("\nDisconnect Server");
+            System.out.println("\nDisconnect Server\n");
         }
-        catch (IOException e){
-            e.printStackTrace();
+        catch (UnknownHostException exception){
+            System.out.println(exception.getMessage());
+        }
+        catch (IOException exception){
+            System.out.println(exception.getMessage());
+            exception.getCause();
         }
 
         return ret;
