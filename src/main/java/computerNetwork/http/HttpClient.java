@@ -23,9 +23,6 @@ public class HttpClient {
     Map<String, String> headers;
     Map<String, String> body;
 
-    public HttpClient() {
-    }
-
     public HttpClient(Map<String, String> params, Map<String, String> headers, Map<String, String> body, String contentType) {
         this.params = params;
         this.headers = headers;
@@ -80,6 +77,7 @@ public class HttpClient {
 
         return ret;
     }
+
     public String createHttpMessage(String url){
         parseUrl(url);
         if (httpMethod.equals("GET"))
