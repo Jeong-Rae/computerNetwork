@@ -141,4 +141,8 @@ private String createPostMessage(){
   ```
   형식으로 구성   
 
+#### 추가사항
+- url 입력 예제
+  - https://api.interfacesejong.xyz/login.html
+  - https://docs.oracle.com/javase/8/docs/api/overview-summary.html
 #FIN
