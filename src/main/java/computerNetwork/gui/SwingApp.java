@@ -5,16 +5,20 @@ import computerNetwork.http.HttpClient;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SwingApp {
     private final int FIX_WIDTH = 720;
     private final int FIX_HEIGHT = 1080;
+    private final String[] METHODS = {"GET", "POST", "PUT", "DELETE"}; //조회, 등록, 수정, 삭제
 
     private static SwingApp instance;
     private String method = "GET";
-    private String url = "https://api.interfacesejong.xyz/login.html";
+    private String inputUrl = "";
     private String contentType = "none";
 
 
@@ -30,7 +34,7 @@ public class SwingApp {
     private JRadioButton jsonRadioButton;
     private JRadioButton formDataRadioButton;
 
-    private SwingApp(){
+    private SwingApp() throws IOException {
 
         JFrame frame = new JFrame("Http Client");
         frame.setSize(FIX_WIDTH + 100, FIX_HEIGHT);
@@ -41,8 +45,8 @@ public class SwingApp {
         JPanel requestPanel = new JPanel(new FlowLayout());
 
         // Http method 선택 상자
-        String[] methods = {"GET", "POST", "PUT", "DELETE"};
-        JComboBox<String> comboBox = new JComboBox<>(methods);
+        //String[] METHODS = {"GET", "POST", "PUT", "DELETE"}; //조회, 등록, 수정, 삭제
+        JComboBox<String> comboBox = new JComboBox<>(METHODS);
         comboBox.addActionListener(e -> {
             method = (String) comboBox.getSelectedItem();
         });
@@ -50,15 +54,19 @@ public class SwingApp {
 
         // URL 입력
         JTextField urlField = new JTextField(35);
-        urlField.setText(url);
-        urlField.addActionListener(e -> {
-            url = urlField.getText();
-            System.out.println("[gui]url : " + url);
-        });
         requestPanel.add(urlField);
+
+        urlField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                inputUrl = urlField.getText();
+                System.out.println("[gui]url : " + inputUrl);
+            }
+        });
 
         // request send 버튼
         JButton sendButton = new JButton("Send");
+        requestPanel.add(sendButton);
         sendButton.addActionListener(e -> {
             Map<String, String> params = tableToMap(paramsTable);
             Map<String, String> headers = tableToMap(headersTable);
@@ -66,11 +74,10 @@ public class SwingApp {
 
             HttpClient httpClient = new HttpClient(params, headers, body, contentType);
 
-            Map<String, String> ret = httpClient.sendRequest(url, method);
+            Map<String, String> ret = httpClient.sendRequest(inputUrl, method);
             responseField.setText(ret.get("response"));
             requestField.setText(ret.get("request"));
         });
-        requestPanel.add(sendButton);
 
         frame.add(requestPanel);
 
@@ -193,7 +200,7 @@ public class SwingApp {
         return map;
     }
 
-    public static SwingApp getInstance() {
+    public static SwingApp getInstance() throws IOException {
         if (instance == null) {
             instance = new SwingApp();
         }
