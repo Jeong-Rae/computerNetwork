@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SwingApp {
-    private final int width = 720;
-    private final int height = 1080;
+    private final int FIX_WIDTH = 720;
+    private final int FIX_HEIGHT = 1080;
 
     private static SwingApp instance;
     private String method = "GET";
@@ -33,7 +33,7 @@ public class SwingApp {
     private SwingApp(){
 
         JFrame frame = new JFrame("Http Client");
-        frame.setSize(width + 100, height);
+        frame.setSize(FIX_WIDTH + 100, FIX_HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setLayout(new FlowLayout());
@@ -128,10 +128,10 @@ public class SwingApp {
             model.addRow(new Object[]{"", ""});
         }
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(width, rows * 23 + 25));
+        scrollPane.setPreferredSize(new Dimension(FIX_WIDTH, rows * 23 + 25));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
-        tablePanel.setPreferredSize(new Dimension(width, rows * 23 + 25 + label.getPreferredSize().height));
+        tablePanel.setPreferredSize(new Dimension(FIX_WIDTH, rows * 23 + 25 + label.getPreferredSize().height));
 
         frame.add(tablePanel);
 
